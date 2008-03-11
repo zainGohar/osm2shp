@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Segoe UI" Size="9" />
+  <Class Name="OSM2SHP.osm">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>xml\osm.cs</FileName>
+      <HashCode>AAQAADggAABAIwAAAAAAAAACIAQAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="wayCollection" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="OSM2SHP.wayCollection">
+    <Position X="3.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>xml\way.cs</FileName>
+      <HashCode>AAIAAAAAAAAABBAACACABAQAAAAAAAAAYAAAgAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="this[System.Int32]" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSM2SHP.way">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>xml\way.cs</FileName>
+      <HashCode>EAACBAAAAAAAAAAAAABAAIACIgABAIAAAAAAiAAgAgA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ndCollection" />
+      <Property Name="tagCollection" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="OSM2SHP.ndCollection">
+    <Position X="9" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>xml\nd.cs</FileName>
+      <HashCode>AAIAAAAAAAAABBAACACABAQAAAAAAAAAYAAAgAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="this[System.Int32]" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSM2SHP.nd">
+    <Position X="12" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>xml\nd.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAACIAAAAAAAAAACAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OSM2SHP.tagCollection">
+    <Position X="9" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>xml\tag.cs</FileName>
+      <HashCode>AAIAAAAAAAAABBAACACABAQAAAAAAAAAYAAAgAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="this[System.Int32]" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="OSM2SHP.tag">
+    <Position X="12" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>xml\tag.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAACIAAAAAAAgRAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+</ClassDiagram>
