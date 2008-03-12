@@ -41,9 +41,9 @@ namespace OSM2SHP
             this.txtSave = new System.Windows.Forms.TextBox();
             this.pnlOptions = new System.Windows.Forms.Panel();
             this.grpOptions = new System.Windows.Forms.GroupBox();
-            this.cbPoints = new System.Windows.Forms.CheckBox();
-            this.cbLines = new System.Windows.Forms.CheckBox();
             this.cbPolygons = new System.Windows.Forms.CheckBox();
+            this.cbLines = new System.Windows.Forms.CheckBox();
+            this.cbPoints = new System.Windows.Forms.CheckBox();
             this.toolStrip1.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -75,20 +75,21 @@ namespace OSM2SHP
             // 
             this.tsbOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.tsbOpen.Image = ((System.Drawing.Image)(resources.GetObject("tsbOpen.Image")));
-            this.tsbOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbOpen.ImageTransparentColor = System.Drawing.Color.Black;
             this.tsbOpen.Name = "tsbOpen";
             this.tsbOpen.Size = new System.Drawing.Size(23, 22);
-            this.tsbOpen.Text = "toolStripButton1";
+            this.tsbOpen.Text = "Open OSM file";
+            this.tsbOpen.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.tsbOpen.Click += new System.EventHandler(this.tsbOpen_Click);
             // 
             // toolStripButton2
             // 
             this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Black;
             this.toolStripButton2.Name = "toolStripButton2";
             this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton2.Text = "toolStripButton2";
+            this.toolStripButton2.Text = "Save Shapefile";
             this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
             // splitContainer1
@@ -172,15 +173,15 @@ namespace OSM2SHP
             this.grpOptions.TabStop = false;
             this.grpOptions.Text = "Options";
             // 
-            // cbPoints
+            // cbPolygons
             // 
-            this.cbPoints.AutoSize = true;
-            this.cbPoints.Location = new System.Drawing.Point(31, 17);
-            this.cbPoints.Name = "cbPoints";
-            this.cbPoints.Size = new System.Drawing.Size(55, 17);
-            this.cbPoints.TabIndex = 0;
-            this.cbPoints.Text = "Points";
-            this.cbPoints.UseVisualStyleBackColor = true;
+            this.cbPolygons.AutoSize = true;
+            this.cbPolygons.Location = new System.Drawing.Point(205, 17);
+            this.cbPolygons.Name = "cbPolygons";
+            this.cbPolygons.Size = new System.Drawing.Size(69, 17);
+            this.cbPolygons.TabIndex = 2;
+            this.cbPolygons.Text = "Polygons";
+            this.cbPolygons.UseVisualStyleBackColor = true;
             // 
             // cbLines
             // 
@@ -194,15 +195,15 @@ namespace OSM2SHP
             this.cbLines.Text = "Lines";
             this.cbLines.UseVisualStyleBackColor = true;
             // 
-            // cbPolygons
+            // cbPoints
             // 
-            this.cbPolygons.AutoSize = true;
-            this.cbPolygons.Location = new System.Drawing.Point(205, 17);
-            this.cbPolygons.Name = "cbPolygons";
-            this.cbPolygons.Size = new System.Drawing.Size(69, 17);
-            this.cbPolygons.TabIndex = 2;
-            this.cbPolygons.Text = "Polygons";
-            this.cbPolygons.UseVisualStyleBackColor = true;
+            this.cbPoints.AutoSize = true;
+            this.cbPoints.Location = new System.Drawing.Point(31, 17);
+            this.cbPoints.Name = "cbPoints";
+            this.cbPoints.Size = new System.Drawing.Size(55, 17);
+            this.cbPoints.TabIndex = 0;
+            this.cbPoints.Text = "Points";
+            this.cbPoints.UseVisualStyleBackColor = true;
             // 
             // frmMain
             // 
