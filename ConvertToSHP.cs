@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Collections;
 using MapTools;
@@ -166,9 +167,9 @@ namespace OSM2SHP
                 foreach (nd nod in strada.ndCollection)
                 {
                     node nodcomplet = infile.nodeCollection.GetByRef(nod.reff);
-                    /*TO DO: Regional settings - to be checked*/
-                    x[i] = double.Parse(nodcomplet.lon.Replace('.', ','));
-                    y[i] = double.Parse(nodcomplet.lat.Replace('.', ','));
+                    /*TO DO: Regional settings - to be checked - should be ok now*/
+                    x[i] = double.Parse(nodcomplet.lon, CultureInfo.InvariantCulture);
+                    y[i] = double.Parse(nodcomplet.lat, CultureInfo.InvariantCulture);
                     nodcomplet.InWay = true;
                     i++;
                 }
@@ -233,8 +234,8 @@ namespace OSM2SHP
                         y = new double[1];
 
                         /*TO DO: Regional settings - to be checked*/
-                        x[0] = double.Parse(nod.lon.Replace('.', ','));
-                        y[0] = double.Parse(nod.lat.Replace('.', ','));
+                        x[0] = double.Parse(nod.lon, CultureInfo.InvariantCulture);
+                        y[0] = double.Parse(nod.lat, CultureInfo.InvariantCulture);
 
                         /*finding node name*/
                         string shapeName = "";
