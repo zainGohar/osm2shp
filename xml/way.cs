@@ -162,7 +162,8 @@ namespace OSM2SHP // TODO, let the user give a namespace
 					            
   						
 						            default:
-							            throw new ApplicationException(this.GetType().Name + " - Unknown element : " + xmlNode.Name);
+                                        break;
+							            //throw new ApplicationException(this.GetType().Name + " - Unknown element : " + xmlNode.Name);
                     }
 				        }
 				      
