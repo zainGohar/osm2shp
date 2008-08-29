@@ -13,6 +13,7 @@ namespace OSM2SHP // TODO, let the user give a namespace
         protected string _visible = "";
         protected string _lat = "";
         protected string _lon = "";
+        protected bool _deleted = false;
         protected tagCollection _tagCollection = new tagCollection();
         protected bool _inway = false;
         
@@ -28,6 +29,12 @@ namespace OSM2SHP // TODO, let the user give a namespace
             set { _inway = value; }
         }
 
+        public bool deleted
+        {
+            get { return _deleted; }
+            set { _deleted = value; }
+        }
+        
         public DateTime timestamp
         {
             get { return _timestamp; }
@@ -142,7 +149,10 @@ namespace OSM2SHP // TODO, let the user give a namespace
 							              _lon = xmlAttribute.Value;
 							              break;
 						          
-  						
+                                    case "deleted" :
+                                          _deleted = Convert.ToBoolean(xmlAttribute.Value);
+                                          break;
+
 						            default:
                                         break;
 							              //throw new ApplicationException(this.GetType().Name + " - Unknown attribute : " + xmlAttribute.Name);
