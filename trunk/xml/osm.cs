@@ -149,13 +149,17 @@ namespace OSM2SHP // TODO, let the user give a namespace
 						            case "node" :
 							              node itemnode = new node();
 							              itemnode.ReadXml(xmlNode as XmlElement);
-							              _nodeCollection.Add(itemnode);
+                                          /*ignore deleted nodes*/
+                                          if (!itemnode.deleted)
+							                _nodeCollection.Add(itemnode);
 							              break;
 					            
 						            case "way" :
 							              way itemway = new way();
 							              itemway.ReadXml(xmlNode as XmlElement);
-							              _wayCollection.Add(itemway);
+                                          /*ignore deleted ways*/
+                                          if (!itemway.deleted)
+                                              _wayCollection.Add(itemway);
 							              break;
 					            
   						

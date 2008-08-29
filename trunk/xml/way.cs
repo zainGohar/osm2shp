@@ -11,6 +11,7 @@ namespace OSM2SHP // TODO, let the user give a namespace
         protected int _id = 0;
         protected DateTime _timestamp = DateTime.MinValue;
         protected string _visible = "";
+        protected bool _deleted = false;
         protected ndCollection _ndCollection = new ndCollection();
         protected tagCollection _tagCollection = new tagCollection();
         protected string _action = "";
@@ -32,7 +33,13 @@ namespace OSM2SHP // TODO, let the user give a namespace
             get { return _visible; }
             set { _visible = value; }
         }
-				
+
+        public bool deleted
+        {
+            get { return _deleted; }
+            set { _deleted = value; }
+        }		
+		
         public ndCollection ndCollection
         {
             get { return _ndCollection; }
@@ -132,7 +139,10 @@ namespace OSM2SHP // TODO, let the user give a namespace
 						            case "action" :
 							              _action = xmlAttribute.Value;
 							              break;
-						          
+
+                                    case "deleted":
+                                          _deleted = Convert.ToBoolean(xmlAttribute.Value);
+                                          break;
   						
 						            default:
                                         break;
