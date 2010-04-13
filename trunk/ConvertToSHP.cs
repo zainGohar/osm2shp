@@ -10,7 +10,7 @@ namespace OSM2SHP
     class ConvertToSHP
     {
         int areas = 0, ways = 0, points = 0;
-        ArrayList linesNames, polygonsNames, pointsNames;
+        List<MetaData> linesData, polygonsData, pointsData;
         osm infile;
 
         public ConvertToSHP(osm infile)
@@ -53,24 +53,25 @@ namespace OSM2SHP
         {
             string filename;
             int shapes = 0;
-            ArrayList nameList;
+            List<MetaData> elementData;
+            List<string> fields = new List<string>();
 
             switch (shapetype)
             {
                 case ShapeLib.ShapeType.Polygon:
                     filename = SHPFile + "-polygons";
                     shapes = areas;
-                    nameList = polygonsNames;
+                    elementData = polygonsData;
                     break;
                 case ShapeLib.ShapeType.PolyLine:
                     filename = SHPFile + "-lines";
                     shapes = ways;
-                    nameList = linesNames;
+                    elementData = linesData;
                     break;
                 case ShapeLib.ShapeType.Point:
                     filename = SHPFile + "-points";
                     shapes = points;
-                    nameList = pointsNames;
+                    elementData = pointsData;
                     break;
                 default:
                     return;
@@ -83,18 +84,38 @@ namespace OSM2SHP
                 return;
             }
 
-            // add some fields 
+            // add some fields. Fields have to be initialized before data is added
             int iRet = ShapeLib.DBFAddField(hDbf, "shapeID", ShapeLib.DBFFieldType.FTInteger, 4, 0);
             iRet = ShapeLib.DBFAddField(hDbf, "shapeName", ShapeLib.DBFFieldType.FTString, 50, 0);
-            //iRet = ShapeLib.DBFAddField(hDbf, "dblField", ShapeLib.DBFFieldType.FTDouble, 8, 4);
-            //iRet = ShapeLib.DBFAddField(hDbf, "boolField", ShapeLib.DBFFieldType.FTLogical, 1, 0);
-            //iRet = ShapeLib.DBFAddField(hDbf, "dateField", ShapeLib.DBFFieldType.FTDate, 8, 0);
+            for (int iShape = 0; iShape < shapes; iShape++)
+            {
+                foreach (KeyValuePair<string, string> entry in elementData[iShape].tags)
+                {
+                    // Make sure that fields are only added once
+                    if (!fields.Contains(entry.Key))
+                    {
+                        fields.Add(entry.Key);
+                    }
+                }
+            }
+            foreach (string field in fields) {
+                iRet = ShapeLib.DBFAddField(hDbf, field, ShapeLib.DBFFieldType.FTString, 128, 0);
+            }
 
             // populate
             for (int iShape = 0; iShape < shapes; iShape++)
             {
                 iRet = (ShapeLib.DBFWriteIntegerAttribute(hDbf, iShape, 0, iShape));
-                iRet = (ShapeLib.DBFWriteStringAttribute(hDbf, iShape, 1, nameList[iShape].ToString()));
+                iRet = (ShapeLib.DBFWriteStringAttribute(hDbf, iShape, 1, elementData[iShape].name));
+                foreach (KeyValuePair<string, string> entry in elementData[iShape].tags) {
+                      // Cut the entry after 128 characters
+                    int stringLength = entry.Value.Length;
+                    if (stringLength > 127)
+                    {
+                        stringLength = 127;
+                    }
+                    iRet = ShapeLib.DBFWriteStringAttribute(hDbf, iShape, fields.IndexOf(entry.Key)+2, entry.Value.Substring(0, stringLength));
+                }
                 //iRet = (ShapeLib.DBFWriteDoubleAttribute(hDbf, iShape, iField++, (100 * r.NextDouble())));
                 //iRet = (ShapeLib.DBFWriteLogicalAttribute(hDbf, iShape, iField++, iShape % 2 == 0));
                 //iRet = (ShapeLib.DBFWriteDateAttribute(hDbf, iShape, iField++, DateTime.Now));
@@ -119,9 +140,9 @@ namespace OSM2SHP
             double[] x, y;
             IntPtr hShpPoly = IntPtr.Zero, hShpLine = IntPtr.Zero, hShpPoint = IntPtr.Zero;
 
-            linesNames = new ArrayList();
-            polygonsNames = new ArrayList();
-            pointsNames = new ArrayList();
+            linesData = new List<MetaData>();
+            polygonsData = new List<MetaData>();
+            pointsData = new List<MetaData>();
             
             if (lines)
             {
@@ -175,14 +196,11 @@ namespace OSM2SHP
                 }
 
                 /*finding way name*/
-                string shapeName = "";
+                MetaData elementData = new MetaData();
+                elementData = extractMetaData(strada);
+
                 foreach (tag t in strada.tagCollection)
                 {
-                    if (t.k == "name")
-                    {
-                        shapeName = t.v;
-                        //break;
-                    }
 
                     /*just to make sure that all the streets are
                      *put in the polylines file*/
@@ -210,14 +228,14 @@ namespace OSM2SHP
                 if ((shapetype == ShapeLib.ShapeType.PolyLine) && lines)
                 {
                     iRet = ShapeLib.SHPWriteObject(hShpLine, -1, pshpObj);
-                    /*add shape name to correct list*/
-                    linesNames.Add(shapeName);
+                    /*add shape meta data to correct list*/
+                    linesData.Add(elementData);
                 }
                 else if ((shapetype == ShapeLib.ShapeType.Polygon) && (polygons))
                 {
                     iRet = ShapeLib.SHPWriteObject(hShpPoly, -1, pshpObj);
-                    /*add shape name to correct list*/
-                    polygonsNames.Add(shapeName);
+                    /*add shape meta data to correct list*/
+                    polygonsData.Add(elementData);
                 }
                 ShapeLib.SHPDestroyObject(pshpObj);
             }
@@ -237,22 +255,14 @@ namespace OSM2SHP
                         x[0] = double.Parse(nod.lon, CultureInfo.InvariantCulture);
                         y[0] = double.Parse(nod.lat, CultureInfo.InvariantCulture);
 
-                        /*finding node name*/
-                        string shapeName = "";
-                        foreach (tag t in nod.tagCollection)
-                        {
-                            if (t.k == "name")
-                            {
-                                shapeName = t.v;
-                                break;
-                            }
-                        }
-
                         /*create object, write it to file and destroy it*/
                         IntPtr pshpObj = ShapeLib.SHPCreateSimpleObject(ShapeLib.ShapeType.Point,
                             1, x, y, new double[1]);
                         int iRet = ShapeLib.SHPWriteObject(hShpPoint, -1, pshpObj);
-                        pointsNames.Add(shapeName);
+
+                        /*finding node meta data*/
+                        MetaData elementData = extractMetaData(nod);
+                        pointsData.Add(elementData);
                         ShapeLib.SHPDestroyObject(pshpObj);
                     }
                 }
@@ -275,6 +285,27 @@ namespace OSM2SHP
                 WriteDBF(ShapeLib.ShapeType.Point, SHPFile);
             }
             return "Completed!";
+        }
+
+        /// <summary>
+        /// Gets the name of the shape and all its tags. 
+        /// </summary>
+        private MetaData extractMetaData(element el)
+        {
+            MetaData md = new MetaData();
+            foreach (tag t in el.tagCollection)
+            {
+                if (t.k == "name")
+                {
+                    md.name = t.v;
+                }
+                else
+                {
+                    md.tags.Add(t.k, t.v);
+                }
+            }
+
+            return md;
         }
     }
 }
