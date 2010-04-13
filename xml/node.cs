@@ -5,48 +5,20 @@ using System.Collections;
 
 namespace OSM2SHP // TODO, let the user give a namespace
 {
-    public class node
+    public class node : element
     {
         
-        protected int _id = 0;
-        protected DateTime _timestamp = DateTime.MinValue;
-        protected string _visible = "";
         protected string _lat = "";
         protected string _lon = "";
-        protected bool _deleted = false;
-        protected tagCollection _tagCollection = new tagCollection();
         protected bool _inway = false;
-        
-        public int id
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
-
+ 
         public bool InWay
         {
             get { return _inway; }
             set { _inway = value; }
         }
 
-        public bool deleted
-        {
-            get { return _deleted; }
-            set { _deleted = value; }
-        }
-        
-        public DateTime timestamp
-        {
-            get { return _timestamp; }
-            set { _timestamp = value; }
-        }
-				
-        public string visible
-        {
-            get { return _visible; }
-            set { _visible = value; }
-        }
-				
+
         public string lat
         {
             get { return _lat; }
@@ -58,13 +30,7 @@ namespace OSM2SHP // TODO, let the user give a namespace
             get { return _lon; }
             set { _lon = value; }
         }
-				
-        public tagCollection tagCollection
-        {
-            get { return _tagCollection; }
-            set { _tagCollection = value; }
-        }
-				
+	
     
         internal virtual void SaveXml(XmlNode xmlParent)
         {
