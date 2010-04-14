@@ -41,6 +41,9 @@ namespace OSM2SHP
             this.txtSave = new System.Windows.Forms.TextBox();
             this.pnlOptions = new System.Windows.Forms.Panel();
             this.grpOptions = new System.Windows.Forms.GroupBox();
+            this.tbProjection = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.cbExtractMetaData = new System.Windows.Forms.CheckBox();
             this.cbPolygons = new System.Windows.Forms.CheckBox();
             this.cbLines = new System.Windows.Forms.CheckBox();
             this.cbPoints = new System.Windows.Forms.CheckBox();
@@ -133,9 +136,9 @@ namespace OSM2SHP
             // 
             this.pnlSave.Controls.Add(this.txtSave);
             this.pnlSave.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlSave.Location = new System.Drawing.Point(0, 54);
+            this.pnlSave.Location = new System.Drawing.Point(0, 105);
             this.pnlSave.Name = "pnlSave";
-            this.pnlSave.Size = new System.Drawing.Size(393, 185);
+            this.pnlSave.Size = new System.Drawing.Size(393, 134);
             this.pnlSave.TabIndex = 1;
             // 
             // txtSave
@@ -145,7 +148,7 @@ namespace OSM2SHP
             this.txtSave.Multiline = true;
             this.txtSave.Name = "txtSave";
             this.txtSave.ReadOnly = true;
-            this.txtSave.Size = new System.Drawing.Size(393, 185);
+            this.txtSave.Size = new System.Drawing.Size(393, 134);
             this.txtSave.TabIndex = 1;
             // 
             // pnlOptions
@@ -155,7 +158,7 @@ namespace OSM2SHP
             this.pnlOptions.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlOptions.Location = new System.Drawing.Point(0, 0);
             this.pnlOptions.Name = "pnlOptions";
-            this.pnlOptions.Size = new System.Drawing.Size(393, 54);
+            this.pnlOptions.Size = new System.Drawing.Size(393, 105);
             this.pnlOptions.TabIndex = 0;
             // 
             // grpOptions
@@ -163,15 +166,46 @@ namespace OSM2SHP
             this.grpOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpOptions.Controls.Add(this.tbProjection);
+            this.grpOptions.Controls.Add(this.label1);
+            this.grpOptions.Controls.Add(this.cbExtractMetaData);
             this.grpOptions.Controls.Add(this.cbPolygons);
             this.grpOptions.Controls.Add(this.cbLines);
             this.grpOptions.Controls.Add(this.cbPoints);
             this.grpOptions.Location = new System.Drawing.Point(16, 3);
             this.grpOptions.Name = "grpOptions";
-            this.grpOptions.Size = new System.Drawing.Size(365, 40);
+            this.grpOptions.Size = new System.Drawing.Size(365, 96);
             this.grpOptions.TabIndex = 0;
             this.grpOptions.TabStop = false;
             this.grpOptions.Text = "Options";
+            // 
+            // tbProjection
+            // 
+            this.tbProjection.Location = new System.Drawing.Point(88, 63);
+            this.tbProjection.Name = "tbProjection";
+            this.tbProjection.Size = new System.Drawing.Size(271, 20);
+            this.tbProjection.TabIndex = 5;
+            this.tbProjection.Text = "GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137,298.25722356" +
+                "3]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]]\n";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(28, 66);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(54, 13);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Projection";
+            // 
+            // cbExtractMetaData
+            // 
+            this.cbExtractMetaData.AutoSize = true;
+            this.cbExtractMetaData.Location = new System.Drawing.Point(31, 40);
+            this.cbExtractMetaData.Name = "cbExtractMetaData";
+            this.cbExtractMetaData.Size = new System.Drawing.Size(148, 17);
+            this.cbExtractMetaData.TabIndex = 3;
+            this.cbExtractMetaData.Text = "Convert tags to meta data";
+            this.cbExtractMetaData.UseVisualStyleBackColor = true;
             // 
             // cbPolygons
             // 
@@ -248,6 +282,9 @@ namespace OSM2SHP
         private System.Windows.Forms.CheckBox cbPolygons;
         private System.Windows.Forms.CheckBox cbLines;
         private System.Windows.Forms.CheckBox cbPoints;
+        private System.Windows.Forms.CheckBox cbExtractMetaData;
+        private System.Windows.Forms.TextBox tbProjection;
+        private System.Windows.Forms.Label label1;
     }
 }
 

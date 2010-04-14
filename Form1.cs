@@ -19,7 +19,7 @@ namespace OSM2SHP
         }
 
         osm content;
-        string OSMFile, SHPFile;
+        string OSMFile;
         ConvertToSHP export;
 
 
@@ -63,16 +63,46 @@ namespace OSM2SHP
                 return;
             }
 
+            ConversionOptions options = new ConversionOptions();
+            options.Lines = cbLines.Checked;
+            options.Points = cbPoints.Checked;
+            options.Polygons = cbPolygons.Checked;
+            options.ConvertTags = cbExtractMetaData.Checked;
+            options.Projection = tbProjection.Text;
+
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                SHPFile = saveFileDialog1.FileName;
+                // This is to get around a peculiar behaviour of ShapeLib.
+                // If the selected file has an extension, it is overwritten,
+                // no matter which additions are made to the filename in
+                // ConvertToSHP. By stripping the extension and all additions
+                // made by previous runs of the program, it is ensured that
+                // new *-points, *-lines, and *-polygons files are created.
+                string tempName = saveFileDialog1.FileName;
+                tempName = tempName.Substring(0, tempName.LastIndexOf("."));
+                if (tempName.LastIndexOf("-points") > 0)
+                {
+                    tempName = tempName.Substring(0, tempName.LastIndexOf("-points"));
+                }
+                if (tempName.LastIndexOf("-lines") > 0)
+                {
+                    tempName = tempName.Substring(0, tempName.LastIndexOf("-lines"));
+                }
+                if (tempName.LastIndexOf("-polygons") > 0)
+                {
+                    tempName = tempName.Substring(0, tempName.LastIndexOf("-polygons"));
+                }
+                options.Filename = tempName;
             }
             else
                 return;
 
-            exportlog = export.SaveToShapefile(SHPFile, cbPoints.Checked, cbLines.Checked, cbPolygons.Checked);
+            
+            
+            exportlog = export.SaveToShapefile(options);
             txtSave.Text += exportlog;
 
         }
+
     }
 }
