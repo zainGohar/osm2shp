@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text;
 using System.Collections;
 using MapTools;
+using System.IO;
 
 namespace OSM2SHP
 {
@@ -49,7 +50,12 @@ namespace OSM2SHP
             }
         }
 
-        private void WriteDBF(ShapeLib.ShapeType shapetype, string SHPFile)
+        /// <summary>
+        /// Creates the database file that contains meta data about the shapes.
+        /// </summary>
+        /// <param name="shapetype"></param>
+        /// <param name="SHPFile"></param>
+        private void WriteDBF(ShapeLib.ShapeType shapetype, string SHPFile, bool convertTags)
         {
             string filename;
             int shapes = 0;
@@ -87,54 +93,66 @@ namespace OSM2SHP
             // add some fields. Fields have to be initialized before data is added
             int iRet = ShapeLib.DBFAddField(hDbf, "shapeID", ShapeLib.DBFFieldType.FTInteger, 4, 0);
             iRet = ShapeLib.DBFAddField(hDbf, "shapeName", ShapeLib.DBFFieldType.FTString, 50, 0);
-            for (int iShape = 0; iShape < shapes; iShape++)
+            // if tags have to be converted, collect the names of all tags
+            if (convertTags)
             {
-                foreach (KeyValuePair<string, string> entry in elementData[iShape].tags)
+                for (int iShape = 0; iShape < shapes; iShape++)
                 {
-                    // Make sure that fields are only added once
-                    if (!fields.Contains(entry.Key))
+                    foreach (KeyValuePair<string, string> entry in elementData[iShape].Tags)
                     {
-                        fields.Add(entry.Key);
+                        // Make sure that fields are only added once
+                        if (!fields.Contains(entry.Key))
+                        {
+                            fields.Add(entry.Key);
+                        }
                     }
                 }
-            }
-            foreach (string field in fields) {
-                iRet = ShapeLib.DBFAddField(hDbf, field, ShapeLib.DBFFieldType.FTString, 128, 0);
+                // create fields in the DB for all tags
+                foreach (string field in fields)
+                {
+                    iRet = ShapeLib.DBFAddField(hDbf, field, ShapeLib.DBFFieldType.FTString, 128, 0);
+                }
             }
 
             // populate
             for (int iShape = 0; iShape < shapes; iShape++)
             {
                 iRet = (ShapeLib.DBFWriteIntegerAttribute(hDbf, iShape, 0, iShape));
-                iRet = (ShapeLib.DBFWriteStringAttribute(hDbf, iShape, 1, elementData[iShape].name));
-                foreach (KeyValuePair<string, string> entry in elementData[iShape].tags) {
-                      // Cut the entry after 128 characters
-                    int stringLength = entry.Value.Length;
-                    if (stringLength > 127)
+                iRet = (ShapeLib.DBFWriteStringAttribute(hDbf, iShape, 1, elementData[iShape].Name));
+                // If tags should be converted, write their values to the appropriate fields
+                if (convertTags)
+                {
+                    foreach (KeyValuePair<string, string> entry in elementData[iShape].Tags)
                     {
-                        stringLength = 127;
+                        // Cut the entry after 128 characters
+                        int stringLength = entry.Value.Length;
+                        if (stringLength > 127)
+                        {
+                            stringLength = 127;
+                        }
+                        iRet = ShapeLib.DBFWriteStringAttribute(hDbf, iShape, fields.IndexOf(entry.Key) + 2, entry.Value.Substring(0, stringLength));
                     }
-                    iRet = ShapeLib.DBFWriteStringAttribute(hDbf, iShape, fields.IndexOf(entry.Key)+2, entry.Value.Substring(0, stringLength));
                 }
-                //iRet = (ShapeLib.DBFWriteDoubleAttribute(hDbf, iShape, iField++, (100 * r.NextDouble())));
-                //iRet = (ShapeLib.DBFWriteLogicalAttribute(hDbf, iShape, iField++, iShape % 2 == 0));
-                //iRet = (ShapeLib.DBFWriteDateAttribute(hDbf, iShape, iField++, DateTime.Now));
             }
-
-            // set a few null values
-            //iRet = ShapeLib.DBFWriteNULLAttribute(hDbf, 0, 0);
-            //iRet = ShapeLib.DBFWriteNULLAttribute(hDbf, 1, 1);
-            //iRet = ShapeLib.DBFWriteNULLAttribute(hDbf, 2, 2);
-            //iRet = ShapeLib.DBFWriteNULLAttribute(hDbf, 1, 3);
-            //iRet = ShapeLib.DBFWriteNULLAttribute(hDbf, 0, 4);
-
-            // modify a value
-            //iRet = (ShapeLib.DBFWriteStringAttribute(hDbf, 2, 1, "Greetings, Earthlings"));
 
             ShapeLib.DBFClose(hDbf);
         }
 
-        public string SaveToShapefile(string SHPFile, bool points, bool lines, bool polygons)
+        /// <summary>
+        /// Writes the projection file.
+        /// </summary>
+        /// <param name="SHPFile">the name of the file to write to</param>
+        /// <param name="projection">the projection to write to the file</param>
+        private void writeProjectionFile(string SHPFile, string projection)
+        {
+            FileInfo f = new FileInfo(SHPFile + ".prj");
+            StreamWriter w = f.CreateText();
+            w.WriteLine(projection);
+            w.Close();
+
+        }
+
+        public string SaveToShapefile(ConversionOptions options)
         {
             ShapeLib.ShapeType shapetype;
             double[] x, y;
@@ -144,26 +162,26 @@ namespace OSM2SHP
             polygonsData = new List<MetaData>();
             pointsData = new List<MetaData>();
             
-            if (lines)
+            if (options.Lines)
             {
                 // create a new PolyLines shapefile
-                hShpLine = ShapeLib.SHPCreate(SHPFile + "-lines", ShapeLib.ShapeType.PolyLine);
+                hShpLine = ShapeLib.SHPCreate(options.Filename + "-lines", ShapeLib.ShapeType.PolyLine);
                 if (hShpLine.Equals(IntPtr.Zero))
                     return "Cannot create lines file!";
             }
 
-            if (polygons)
+            if (options.Polygons)
             {
                 // create a new Polygons shapefile
-                hShpPoly = ShapeLib.SHPCreate(SHPFile + "-polygons", ShapeLib.ShapeType.Polygon);
+                hShpPoly = ShapeLib.SHPCreate(options.Filename + "-polygons", ShapeLib.ShapeType.Polygon);
                 if (hShpPoly.Equals(IntPtr.Zero))
                     return "Cannot create polygons file!";
             }
 
-            if (points)
+            if (options.Points)
             {
                 // create a new Points shapefile
-                hShpPoint = ShapeLib.SHPCreate(SHPFile + "-points", ShapeLib.ShapeType.Point);
+                hShpPoint = ShapeLib.SHPCreate(options.Filename + "-points", ShapeLib.ShapeType.Point);
                 if (hShpPoint.Equals(IntPtr.Zero))
                     return "Cannot create points file!";
             }
@@ -225,13 +243,13 @@ namespace OSM2SHP
                 IntPtr pshpObj = ShapeLib.SHPCreateSimpleObject(shapetype,
                     strada.ndCollection.Count, x, y, new double[strada.ndCollection.Count]);
                 int iRet;
-                if ((shapetype == ShapeLib.ShapeType.PolyLine) && lines)
+                if ((shapetype == ShapeLib.ShapeType.PolyLine) && options.Lines)
                 {
                     iRet = ShapeLib.SHPWriteObject(hShpLine, -1, pshpObj);
                     /*add shape meta data to correct list*/
                     linesData.Add(elementData);
                 }
-                else if ((shapetype == ShapeLib.ShapeType.Polygon) && (polygons))
+                else if ((shapetype == ShapeLib.ShapeType.Polygon) && (options.Polygons))
                 {
                     iRet = ShapeLib.SHPWriteObject(hShpPoly, -1, pshpObj);
                     /*add shape meta data to correct list*/
@@ -240,7 +258,7 @@ namespace OSM2SHP
                 ShapeLib.SHPDestroyObject(pshpObj);
             }
 
-            if (points)
+            if (options.Points)
             {
                 /*write the nodes that are not part of any way*/
                 foreach (node nod in infile.nodeCollection)
@@ -269,20 +287,23 @@ namespace OSM2SHP
             }
 
             // free resources and write dbf files
-            if (polygons)
+            if (options.Polygons)
             {
                 ShapeLib.SHPClose(hShpPoly);
-                WriteDBF(ShapeLib.ShapeType.Polygon, SHPFile);
+                WriteDBF(ShapeLib.ShapeType.Polygon, options.Filename, options.ConvertTags);
+                writeProjectionFile(options.Filename + "-polygons", options.Projection);
             }
-            if (lines)
+            if (options.Lines)
             {
                 ShapeLib.SHPClose(hShpLine);
-                WriteDBF(ShapeLib.ShapeType.PolyLine, SHPFile);
+                WriteDBF(ShapeLib.ShapeType.PolyLine, options.Filename, options.ConvertTags);
+                writeProjectionFile(options.Filename + "-lines", options.Projection);
             }
-            if (points)
+            if (options.Points)
             {
                 ShapeLib.SHPClose(hShpPoint);
-                WriteDBF(ShapeLib.ShapeType.Point, SHPFile);
+                WriteDBF(ShapeLib.ShapeType.Point, options.Filename, options.ConvertTags);
+                writeProjectionFile(options.Filename + "-points", options.Projection);
             }
             return "Completed!";
         }
@@ -297,11 +318,11 @@ namespace OSM2SHP
             {
                 if (t.k == "name")
                 {
-                    md.name = t.v;
+                    md.Name = t.v;
                 }
                 else
                 {
-                    md.tags.Add(t.k, t.v);
+                    md.Tags.Add(t.k, t.v);
                 }
             }
 

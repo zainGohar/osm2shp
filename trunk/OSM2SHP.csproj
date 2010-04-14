@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConversionOptions.cs" />
     <Compile Include="MetaData.cs" />
     <Compile Include="ConvertToSHP.cs" />
     <Compile Include="Form1.cs">

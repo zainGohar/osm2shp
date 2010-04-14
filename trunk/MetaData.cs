@@ -13,13 +13,13 @@ namespace OSM2SHP {
         private string _name;
         private Dictionary<string, string> _tags = new Dictionary<string,string>();
 
-        public string name
+        public string Name
         {
             get { return _name; }
             set { _name = value; }
         }
 
-        public Dictionary<string, string> tags
+        public Dictionary<string, string> Tags
         {
             get { return _tags; }
             set { _tags = value; }
