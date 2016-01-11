@@ -1,0 +1,3 @@
+Many GIS applications are using Shapefile format (.shp,.shx,.dbf). At this moment there is no easy to use tool to convert from OpenStreetMap format to Shapefile, so the data from OSM can be used freely by these applications.
+
+This application will be able to do the following: let user select what type of shapes to export, read from configuration files how to interpret different tag in OSM, batch processing (console version or GUI, not yet decided).
